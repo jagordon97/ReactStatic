@@ -1,101 +1,102 @@
-import Image from "next/image";
+'use client';
+import { useState, useEffect } from 'react';
+
 
 export default function Home() {
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className='full-width'>
+      <h1>Hello React?</h1>
+      <div className='flex flex-wrap justify-center'>
+        <CountButton />
+        <ColorButton /> 
+        <Timer />
+        <AddString />
+        <CountButton />
+        <CountButton />
+      </div>
     </div>
   );
 }
+
+function CountButton(){
+  const [count, setCount] = useState(0);
+  function handleClick(){
+    setCount(count + 1);
+  } 
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useState Hook Count</h3>
+      <div className='card-body'>
+        <div>This is a useState hook that updates when you click it.</div>
+        <button onClick={handleClick}>Clicked {count} times!</button>
+      </div>
+    </div>
+  )
+}
+
+function ColorButton(){
+  const [typed, setTyped] = useState();
+  function handleSubmit(){
+    setTyped(document.getElementById('textColor').value);
+  }
+
+  return (
+      <div className='card'>
+        <h3 className='card-title'>useState Hook Color</h3>
+        <div className='card-body'>
+        <div>This is a useState hook that updates when you type in the input box.</div>
+
+        <input id="textColor" onChange={handleSubmit} />
+        <div className='full-width'>Box contains: {typed}</div>
+      </div>
+      </div>
+  );
+  
+}
+
+function Timer(){
+    const [timer, setTimer] = useState(0);
+    useEffect(() => {
+        setTimeout(() => {
+          setTimer(timer + 10);
+        }, 10000);
+    });
+    return (
+      <div className='card'>
+        <h3 className='card-title'>useEffect Hook Timer</h3>
+        <div className='card-body'>
+        <div>This is a useEffect hook that updates every 10 seconds.</div>
+
+        <div className='full-width'>Seconds {timer}</div>
+      </div>
+      </div>
+    );
+}
+
+function AddString(){
+  const[text, setText] = useState('');
+  const[full, setFull] = useState('');
+
+  function handleSubmit(){
+    setText(document.getElementById('text').value);
+  };
+  useEffect(() => {
+    setFull(full + text);
+  }, [text]);
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useEffect Hook Timer</h3>
+      <div className='card-body'>
+        <div>This is a useEffect hook that concats words when you change the text.</div>
+
+        <input id="text"/>
+        <input id="textColor" className='input-submit' type="submit" onClick={handleSubmit} value="Submit" />
+        <div id="fullText" className='full-width'>{full}</div>
+      </div>  
+    </div>
+  );
+
+};
