@@ -1,10 +1,13 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext, createContext, useRef } from 'react';
 
+const UserContext = createContext('Jeff');
 
 export default function Home() {
   
+  const [user, setUser] = useState("Abby");
   return (
+    <UserContext.Provider value={user}>
     <div className='full-width'>
       <h1>Hello React?</h1>
       <div className='flex flex-wrap justify-center'>
@@ -12,10 +15,11 @@ export default function Home() {
         <ColorButton /> 
         <Timer />
         <AddString />
-        <CountButton />
-        <CountButton />
+        <NestedComponent />
+        <FocusInput />
       </div>
     </div>
+    </UserContext.Provider>
   );
 }
 
@@ -99,4 +103,37 @@ function AddString(){
     </div>
   );
 
+};
+
+function NestedComponent(){
+  const user = useContext(UserContext);
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useContext Hook Timer</h3>
+      <div className='card-body'>
+        <div>This is a useContext hook to provide conext for any components nested further inside the main level.</div>
+
+        <div id="fullText" className='full-width'>User is: {user}</div>
+      </div>  
+    </div>
+  );
+};
+
+function FocusInput(){
+  const inputElement = useRef(null);
+  function focusInput() {
+    inputElement.current.focus();
+  };
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useRef Hook Timer</h3>
+      <div className='card-body'>
+        <div>This is a useRef hook that sets the focus to type in the box.</div>
+
+        <input type="text" ref={inputElement}/>
+        <button onClick={focusInput}>Focus Input</button>
+      </div>  
+    </div>
+  );
 };
