@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useContext, createContext, useRef } from 'react';
+import { useState, useEffect, useContext, createContext, useRef, useReducer } from 'react';
 
 const UserContext = createContext('Jeff');
 
@@ -16,7 +16,10 @@ export default function Home() {
         <Timer />
         <AddString />
         <NestedComponent />
-        <FocusInput />
+        <FocusType />
+        <LastInput />
+        <Todos />
+        <AgeUp />
       </div>
     </div>
     </UserContext.Provider>
@@ -119,7 +122,8 @@ function NestedComponent(){
   );
 };
 
-function FocusInput(){
+function FocusType(){
+  //needs to be null since it is set on a element
   const inputElement = useRef(null);
   function focusInput() {
     inputElement.current.focus();
@@ -129,7 +133,7 @@ function FocusInput(){
     <div className='card'>
       <h3 className='card-title'>useRef Hook Timer</h3>
       <div className='card-body'>
-        <div>This is a useRef hook that sets the focus to type in the box.</div>
+        <div>This is a useRef hook that sets the focus to type in the box on button click.</div>
 
         <input type="text" ref={inputElement}/>
         <button onClick={focusInput}>Focus Input</button>
@@ -137,3 +141,113 @@ function FocusInput(){
     </div>
   );
 };
+
+function LastInput(){
+  const [input, setInput] = useState("");
+  const previousInput = useRef("");
+
+  useEffect(() => {
+    previousInput.current = input;
+  }, [input]);
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useRef Hook Last Input</h3>
+      <div className='card-body'>
+        <div>This is a useRef hook that keeps track of the last input.</div>
+
+        
+        <input type="text" onChange={(e) => setInput(e.target.value)} />
+        <div>Current Input: {input}</div>
+        <div>Previous Input: {previousInput.current} </div>
+      </div>  
+    </div>
+  );
+};
+
+
+const initialTodos = [
+  {
+    id: 1,
+    title: "Todo 1",
+    complete: false,
+  },
+  {
+    id: 2,
+    title: "Todo 2",
+    complete: false,
+  },
+];
+const reducer = (state, action) => {
+  switch(action.type) {
+    case 'COMPLETE':
+      return state.map((todo) => {
+        if(todo.id === action.id) {
+          return { ...todo, complete: !todo.complete};
+        } else {
+          return todo;
+        }
+      });
+    default:
+        return state;
+  };
+};
+function Todos() {
+
+  const [todos, dispatch] = useReducer(reducer, initialTodos)
+
+  const handleComplete = (todo) => {
+    dispatch({type: "COMPLETE", id: todo.id});
+  };
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useReducer Hook Todo</h3>
+      <div className='card-body'>
+        <div>This is a useReducer hook that keeps track of a status on a todo.</div>
+
+        {todos.map((todo) => (
+          <div key={todo.id}>
+            <label>
+            <input type="checkbox" checked={todo.complete} onChange={() => handleComplete(todo)} />
+            {todo.title}
+            </label>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+function reducer2(state, action){
+  if(action.type === 'incrementAge'){
+    return { age: state.age + 1};
+  } else if(action.type === 'decrementAge'){
+    return { age: state.age - 1};
+  }
+
+  throw Error('Unknown Action.');
+}
+function AgeUp() {
+  const [state, dispatch] = useReducer(reducer2, {age: 42});
+  function handleAge(e) {
+    if(e.currentTarget.id === 'plus'){
+      dispatch({type: 'incrementAge'})
+    } else if(e.currentTarget.id === 'minus'){
+      dispatch({type: 'decrementAge'})
+    }
+  };
+
+  return (
+    <div className='card'>
+      <h3 className='card-title'>useReducer Hook Adjust Age</h3>
+      <div className='card-body'>
+        <div>This is a useReducer hook that uses a reducer to increment/decrement age.</div>
+        <div>Your Age is: {state.age}</div>
+        <button id="plus" onClick={handleAge} >Increment Age</button>
+        <button id="minus" onClick={handleAge} >Decrement Age</button>
+      </div>
+    </div>
+  )
+}
